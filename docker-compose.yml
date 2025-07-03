@@ -1,0 +1,82 @@
+services:
+  web:
+    container_name: coffee_app
+    image: coffee-app-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    restart: "no"
+    networks:
+      - coffee_net
+
+  db:
+    container_name: coffee_db
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - coffee_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: "no"
+    networks:
+      - coffee_net
+
+  redis:
+    container_name: coffee_redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: "no"
+    networks:
+      - coffee_net
+
+  # celery:
+  #   build: .
+  #   container_name: coffee_celery_worker
+  #   command: celery -A config worker --loglevel=info
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #     web:
+  #       condition: service_started
+  #   env_file:
+  #     - .env
+  #   restart: "no"
+  #   networks:
+  #     - coffee_net
+
+volumes:
+  coffee_db_data:
+    name: coffee_db_data
+
+networks:
+  coffee_net:
+    driver: bridge
