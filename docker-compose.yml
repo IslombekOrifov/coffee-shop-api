@@ -6,7 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     command: >
-      sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload"
+        
     env_file:
       - .env
     ports:
@@ -58,20 +59,36 @@ services:
     networks:
       - coffee_net
 
-  # celery:
-  #   build: .
-  #   container_name: coffee_celery_worker
-  #   command: celery -A config worker --loglevel=info
-  #   depends_on:
-  #     redis:
-  #       condition: service_healthy
-  #     web:
-  #       condition: service_started
-  #   env_file:
-  #     - .env
-  #   restart: "no"
-  #   networks:
-  #     - coffee_net
+  worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A app.tasks.celery.celery_app worker -l info --concurrency=4
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    restart: always
+    networks:
+      - coffee_net
+
+  beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A app.tasks.celery.celery_app beat --loglevel=info
+    depends_on:
+      - worker
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    restart: always
+    networks:
+      - coffee_net
 
 volumes:
   coffee_db_data:

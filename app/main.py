@@ -1,15 +1,15 @@
 from fastapi import FastAPI
 
 from app.config.settings import settings
+from app.routers import auth, users
 
 
-def create_app():
-    app = FastAPI(
-        title=settings.PROJECT_NAME,
-        description=settings.PROJECT_DESCRIPTION,
-        debug=settings.DEBUG,
-    )
 
-    return app
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description=settings.PROJECT_DESCRIPTION,
+    debug=settings.DEBUG,
+)
 
-app = create_app()
+app.include_router(auth.router)
+app.include_router(users.router)
