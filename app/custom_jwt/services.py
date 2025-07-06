@@ -1,20 +1,21 @@
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
+
 from fastapi import HTTPException
-from sqlalchemy import select
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 from passlib.context import CryptContext
+from sqlalchemy import select
 
 from app.config.settings import settings
 from app.deps.db import SessionDep
-from .models import RefreshToken, BlacklistRefreshToken
 
+from .models import BlacklistRefreshToken, RefreshToken
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def create_token(data: dict, expires_delta: timedelta, scope: str):
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + expires_delta
+    expire = datetime.now(UTC) + expires_delta
     to_encode.update({
         "exp": expire,
         "scope": scope,

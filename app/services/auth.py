@@ -1,15 +1,15 @@
 from fastapi import HTTPException, status
-from sqlalchemy import select
 
-from app.custom_jwt.services import (
-    pwd_context, create_access_token, 
-    create_refresh_token, save_refresh_token
-)
-
-from app.deps.db import SessionDep
-from app.services.user_dao import UserDAO
 from app.common.enums import UserStatus
-from app.schemas.auth import CreateUser, LoginSchema, TokenReponse
+from app.custom_jwt.services import (
+    create_access_token,
+    create_refresh_token,
+    pwd_context,
+    save_refresh_token,
+)
+from app.deps.db import SessionDep
+from app.schemas.auth import LoginSchema, TokenReponse
+from app.services.user_dao import UserDAO
 
 
 async def generate_tokens(data: LoginSchema, db: SessionDep) -> TokenReponse:

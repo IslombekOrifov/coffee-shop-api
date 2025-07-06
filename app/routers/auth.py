@@ -1,20 +1,22 @@
-from datetime import datetime, timezone, UTC
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, HTTPException, status
 
-from app.custom_jwt.services import (
-    create_access_token, verify_token,
-    get_refresh_token, delete_refresh_token, is_token_blacklisted,
-    add_token_to_blacklist
-)
-
-from app.deps.db import SessionDep
 from app.common.enums import UserStatus
+from app.custom_jwt.services import (
+    add_token_to_blacklist,
+    create_access_token,
+    delete_refresh_token,
+    get_refresh_token,
+    is_token_blacklisted,
+    verify_token,
+)
+from app.deps.db import SessionDep
+from app.schemas.auth import CreateUser, LoginSchema, TokenReponse, VerifyCodeSchema
+from app.schemas.user import UserDetail
+from app.services.auth import generate_tokens
 from app.services.user import create_user
 from app.services.user_dao import UserDAO, VerifyCodeDAO
-from app.services.auth import generate_tokens
-from app.schemas.auth import CreateUser, VerifyCodeSchema, LoginSchema, TokenReponse
-from app.schemas.user import UserDetail
-
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -68,7 +70,7 @@ async def refresh(token: str, db: SessionDep):
     db_token = await get_refresh_token(db, token, type="whitelist")
     if not db_token:
         raise HTTPException(status_code=401, detail="Invalid refresh token")
-    if db_token.expires_at < datetime.now(timezone.utc):
+    if db_token.expires_at < datetime.now(UTC):
         await delete_refresh_token(db, token, type="whitelist")
         raise HTTPException(status_code=401, detail="Refresh token expired")
     

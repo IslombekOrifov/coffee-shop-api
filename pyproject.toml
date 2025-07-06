@@ -1,0 +1,22 @@
+[project]
+name = "coffee_shop_api"
+version = "0.1.0"
+description = "Mini authentication system"
+authors = [
+    {name = "Islombek Orifov", email = "islombekorifov0199@gmail.com"},
+]
+
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+select = ["E", "F", "B", "I", "UP"]
+ignore = ["E501"]
+exclude = [
+    ".venv",
+    "migrations",
+    "celery.py",
+]

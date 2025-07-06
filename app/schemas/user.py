@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
-from app.common.enums import UserStatus, Role
+from app.common.enums import Role, UserStatus
 
 
 class UserDetail(BaseModel):

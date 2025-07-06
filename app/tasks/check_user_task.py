@@ -1,15 +1,17 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from app.config.database import SessionLocal
 from app.models.user import User, UserStatus
+
 from .celery import celery_app
+
 
 @celery_app.task(name="app.tasks.check_user_task.delete_unverified_users")
 def delete_unverified_users():
-    print(f"Deleting started")
+    print("Deleting started")
     db = SessionLocal()
     try:
-        cutoff_date = datetime.now(timezone.utc) - timedelta(days=2)
+        cutoff_date = datetime.now(UTC) - timedelta(days=2)
         users_to_delete = db.query(User).filter(
             User.status == UserStatus.UNVERIFIED,
             User.created_at < cutoff_date

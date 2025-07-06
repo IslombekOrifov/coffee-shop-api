@@ -1,7 +1,8 @@
+from collections.abc import AsyncGenerator
+
+from sqlalchemy import DateTime, create_engine, func
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker, Mapped, mapped_column
-from sqlalchemy import DateTime, func, create_engine
-from typing import AsyncGenerator
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
 from .settings import settings
 

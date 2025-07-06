@@ -1,13 +1,11 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 
+from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Enum as SqlEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import (
-    BigInteger, String, Integer, Enum as SqlEnum,
-    ForeignKey, DateTime
-)
 
+from app.common.enums import Role, UserStatus
 from app.config.database import Base
-from app.common.enums import UserStatus, Role
 
 
 class User(Base):

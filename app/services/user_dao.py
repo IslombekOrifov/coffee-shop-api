@@ -1,10 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
-from app.deps.db import SessionDep
+
+from app.common.enums import Role, UserStatus
 from app.config.dao import BaseDAO
+from app.deps.db import SessionDep
 from app.models.user import User, VerifyCode
 from app.schemas.auth import CreateUser
-from app.common.enums import UserStatus, Role
 
 
 class UserDAO(BaseDAO):

@@ -1,11 +1,11 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import logging
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from app.config.settings import settings
-from .celery import celery_app
 
+from .celery import celery_app
 
 logger = logging.getLogger(__name__)
 

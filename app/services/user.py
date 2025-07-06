@@ -1,14 +1,15 @@
+from datetime import UTC, datetime, timedelta
 from random import randint
-from datetime import datetime, UTC, timedelta
+
 from fastapi import HTTPException
 from sqlalchemy import select
 
+from app.custom_jwt.services import pwd_context
 from app.deps.db import SessionDep
-from app.services.user_dao import UserDAO, VerifyCodeDAO
 from app.models.user import User
 from app.schemas.auth import CreateUser
 from app.schemas.user import UserDetail
-from app.custom_jwt.services import pwd_context
+from app.services.user_dao import UserDAO, VerifyCodeDAO
 from app.tasks.send_mail_tasks import send_email_task
 
 
